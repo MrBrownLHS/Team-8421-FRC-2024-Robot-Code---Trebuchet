@@ -7,12 +7,10 @@ package frc.robot;
 import frc.robot.Constants.CoPilotConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.*;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
@@ -25,18 +23,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private XboxController driveController = new XboxController(DriverConstants.DRIVER_CONTROLLER_PORT);
-  private XboxController copilotController = new XboxController(CoPilotConstants.COPILOT_CONTROLLER_PORT);
+  private CommandXboxController driveController = new CommandXboxController(DriverConstants.DRIVER_CONTROLLER_PORT);
+  private CommandXboxController copilotController = new CommandXboxController(CoPilotConstants.COPILOT_CONTROLLER_PORT);
   private final Drivetrain m_drivetrain = new Drivetrain();
-  private final Arm m_armrotateforward = new Arm();
-  private final Arm m_armrotatereverse = new Arm();
+  private final Arm m_arm = new Arm();
   private final Launcher m_notelaunch = new Launcher();
-  private final Collector m_notedrop = new Collector();
-  private final Collector m_notecollect = new Collector();
-  private final Collector m_collectorstop = new Collector();
-  private final Arm m_armHang = new Arm();
-  
-  
+  private final Collector m_notecollector = new Collector();
+    
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -64,30 +57,20 @@ public class RobotContainer {
               -driveController.getLeftY(), -driveController.getRightX()),
         m_drivetrain));
 
-    new JoystickButton(copilotController, XboxController.Button.kRightBumper.value)
-      .onTrue(new InstantCommand(() -> m_armrotateforward.pivotforward()));
-    
-    new JoystickButton(copilotController, XboxController.Button.kLeftBumper.value)
-      .onTrue(new InstantCommand(() -> m_armrotatereverse.pivotreverse()));
-          
-    new JoystickButton(copilotController, XboxController.Button.kA.value)
-      .onTrue(new InstantCommand(() -> m_notecollect.collect()));
-    
-    new JoystickButton(copilotController, XboxController.Button.kB.value)
-      .onTrue(new InstantCommand(() -> m_notedrop.collectReverse()));
+    copilotController.rightBumper().onTrue(new InstantCommand(() -> m_arm.pivotforward()));
 
-    new JoystickButton(copilotController, XboxController.Button.kX.value)
-      .onTrue(new InstantCommand(() -> m_collectorstop.collectStop()));
+    copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverse()));
 
-    new JoystickButton(copilotController, XboxController.Axis.kLeftTrigger.value)
-      .onTrue(new InstantCommand(() -> m_notelaunch.noteLaunch()));
+    copilotController.a().onTrue(new InstantCommand(() -> m_notecollector.collect()));
 
-    new JoystickButton(copilotController, XboxController.Axis.kRightTrigger.value)
-      .onTrue(new InstantCommand(() -> m_notedrop.collectReverse()));
-    
-    new JoystickButton(copilotController, XboxController.Button.kY.value)
-      .onTrue(new InstantCommand(() -> m_armHang.chainHang()));
-    
+    copilotController.b().onTrue(new InstantCommand(() -> m_notecollector.collectReverse()));
+
+    copilotController.x().onTrue(new InstantCommand(() -> m_notecollector.collectStop()));
+
+    copilotController.rightTrigger().onTrue(new InstantCommand(() -> m_notelaunch.noteLaunch()));
+
+    copilotController.y().onTrue(new InstantCommand(() -> m_arm.chainHang()));
+
 
     
     
