@@ -9,20 +9,20 @@ import frc.robot.subsystems.Arm;
 
 public class ArmForward extends Command {
   
-  private final Arm m_armrotateforward;
+  private final Arm m_arm;
 
-  public ArmForward(Arm m_armrotateforward) {
+  public ArmForward(Arm m_arm) {
 
-    this.m_armrotateforward = m_armrotateforward;
+    this.m_arm = m_arm;
 
-    addRequirements(m_armrotateforward);
+    addRequirements(m_arm);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_armrotateforward.pivotforward();
+    m_arm.pivotforward();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 
@@ -27,6 +31,16 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     m_leftFrontVictorSPX.addFollower(m_leftRearVictorSPX);
     m_rightFrontVictorSPX.addFollower(m_rightRearVictorSPX);
+
+    setDefaultCommand(run(() -> {
+      m_drivetrain.arcadeDrive(0.0, 0.0);
+    }));
+  }
+
+  public Command arcadeDrive(DoubleSupplier moveSpeed, DoubleSupplier rotateSpeed){
+    return run(() -> {
+      m_drivetrain.arcadeDrive(0.5 * moveSpeed.getAsDouble(), 0.5 * rotateSpeed.getAsDouble());
+    });
   }
 
   @Override
