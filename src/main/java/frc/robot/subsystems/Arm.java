@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
@@ -24,33 +25,36 @@ public class Arm extends SubsystemBase {
 
   }
 
-  public void pivotforward() {
-    if (!m_forwardArmStop.get()) {
-        m_ArmLeftVictorSPX.set(0.25);
-        m_ArmRightVictorSPX.set(-0.25);
-    } else {
-        m_ArmLeftVictorSPX.stopMotor();
-        m_ArmRightVictorSPX.stopMotor();
-    }
-    }
+  public Command pivotforwardCommand() {
+    return run(() -> {
+      m_ArmLeftVictorSPX.set(0.25);
+      m_ArmRightVictorSPX.set(-0.25);
+    }).until(m_forwardArmStop::get).finallyDo(() -> {
+      m_ArmLeftVictorSPX.stopMotor();
+      m_ArmLeftVictorSPX.stopMotor();
+    });      
+   }
 
-  public void pivotreverse() {
-    if (!m_reverseArmStop.get()) {
-        m_ArmLeftVictorSPX.set(-0.25);
-        m_ArmRightVictorSPX.set(0.25);
-    } else {
-        m_ArmLeftVictorSPX.stopMotor();
-        m_ArmRightVictorSPX.stopMotor();
-    }
-    }
-  public void stopArm() {
-    m_ArmLeftVictorSPX.stopMotor();
-    m_ArmRightVictorSPX.stopMotor();
-  }
+  public Command pivotreverseCommand() {
+    return run(() -> {
+      m_ArmLeftVictorSPX.set(-0.25);
+      m_ArmRightVictorSPX.set(0.25);
+    }).until(m_reverseArmStop::get).finallyDo(() -> {
+      m_ArmLeftVictorSPX.stopMotor();
+      m_ArmLeftVictorSPX.stopMotor();
+    }); 
+   }
 
-  public void chainHang() {
-    m_ArmLeftVictorSPX.set(0);
-    m_ArmRightVictorSPX.set(0);
+  public Command chainHangCommand() {
+    return run(() -> {
+      m_ArmLeftVictorSPX.set(0.25);
+      m_ArmRightVictorSPX.set(-0.25);
+      //Whiletrue button behavior as the hang may not trigger the forward limit switch
+    }).until(m_forwardArmStop::get).finallyDo(() -> {
+      m_ArmLeftVictorSPX.set(0);
+      m_ArmLeftVictorSPX.set(0);
+      //Does setting speed to 0 artificially "Break" the motor?
+    }); 
   }
 
   @Override

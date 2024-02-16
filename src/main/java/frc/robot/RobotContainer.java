@@ -57,9 +57,9 @@ public class RobotContainer {
               -driveController.getLeftY(), -driveController.getRightX()),
         m_drivetrain));
 
-    copilotController.rightBumper().onTrue(new InstantCommand(() -> m_arm.pivotforward()));
+    copilotController.rightBumper().onTrue(new InstantCommand(() -> m_arm.pivotforwardCommand()));
 
-    copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverse()));
+    copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverseCommand()));
 
     copilotController.a().onTrue(new InstantCommand(() -> m_notecollector.collect()));
 
@@ -69,7 +69,7 @@ public class RobotContainer {
 
     copilotController.rightTrigger().onTrue(new InstantCommand(() -> m_notelaunch.noteLaunch()));
 
-    copilotController.y().onTrue(new InstantCommand(() -> m_arm.chainHang()));
+    copilotController.y().whileTrue(new InstantCommand(() -> m_arm.chainHangCommand()));
 
 
     
