@@ -27,16 +27,16 @@ public class RobotContainer {
   private CommandXboxController copilotController = new CommandXboxController(CoPilotConstants.COPILOT_CONTROLLER_PORT);
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final Arm m_arm = new Arm();
-  private final Launcher m_notelaunch = new Launcher();
-  private final Collector m_notecollector = new Collector();
+  private final CollectorLauncher m_notecollectorlauncher = new CollectorLauncher();
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    
-   
-    
+
+    m_arm.setDefaultCommand(
+      new RunCommand(() -> m_arm.pivotforwardCommand(), m_drivetrain));
+        
   }
 
   /**
@@ -61,13 +61,11 @@ public class RobotContainer {
 
     copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverseCommand()));
 
-    copilotController.a().onTrue(new InstantCommand(() -> m_notecollector.collect()));
+    copilotController.a().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectCommand()));
 
-    copilotController.b().onTrue(new InstantCommand(() -> m_notecollector.collectReverse()));
+    copilotController.b().whileTrue(new InstantCommand(() -> m_notecollectorlauncher.collectReverseCommand()));
 
-    copilotController.x().onTrue(new InstantCommand(() -> m_notecollector.collectStop()));
-
-    copilotController.rightTrigger().onTrue(new InstantCommand(() -> m_notelaunch.noteLaunch()));
+    copilotController.rightTrigger().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectLaunchCommand()));
 
     copilotController.y().whileTrue(new InstantCommand(() -> m_arm.chainHangCommand()));
 
