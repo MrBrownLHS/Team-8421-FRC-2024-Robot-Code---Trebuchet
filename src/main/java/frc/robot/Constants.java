@@ -44,6 +44,7 @@ public final class Constants {
   public static class PivotConstants {
     public static final int PIVOT_MOTOR_LEFT_VICTORSPX = 7;
     public static final int PIVOT_MOTOR_RIGHT_VICTORSPX = 8;
+    public static final int ARM_LOCKER_SERVO = 3;
 
   }
 
