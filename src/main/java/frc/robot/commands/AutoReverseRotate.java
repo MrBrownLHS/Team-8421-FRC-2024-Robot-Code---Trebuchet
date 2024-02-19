@@ -8,17 +8,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.subsystems.Drivetrain;
 
-public final class AutoForwardTurn {
+public final class AutoReverseRotate {
   /** Example static factory for an autonomous command. */
-  public static Command forwardTurn(Drivetrain m_drivetrain) {
-    return new RunCommand(() -> m_drivetrain.arcadeDrive(0.5, 0))
+  public static Command reverseRotate(Drivetrain m_drivetrain) {
+    return new RunCommand(() -> m_drivetrain.arcadeDrive(-0.5, 0))
     .withTimeout(1)
     .andThen(new RunCommand(() -> m_drivetrain.arcadeDrive(0,0.25))
     .withTimeout(5));
     
   }
 
-  private AutoForwardTurn() {
+  private AutoReverseRotate() {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 }
