@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 // Use this to help with static error https://github.com/TheMathWiz56/2024-Crescendo-Java-Code-Joseph/blob/main/2024%20Crescendo%20Java%20Code%20-%20Joseph/Swerve_Project/src/main/java/frc/robot/RobotContainer.java
 /**
@@ -34,9 +34,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    m_arm.setDefaultCommand(
-      new RunCommand(() -> m_arm.pivotforwardCommand(), m_drivetrain));
-        
+           
   }
 
   /**
@@ -50,13 +48,8 @@ public class RobotContainer {
    */
   
    private void configureBindings() {
-    m_drivetrain.setDefaultCommand(
-      new RunCommand(
-        () ->
-            m_drivetrain.arcadeDrive(
-              -driveController.getLeftY(), -driveController.getRightX()),
-        m_drivetrain));
-
+    new RunCommand(() -> m_drivetrain.arcadeDrive(-driveController.getLeftY(), -driveController.getRightX()));
+          
     copilotController.rightBumper().onTrue(new InstantCommand(() -> m_arm.pivotforwardCommand()));
 
     copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverseCommand()));

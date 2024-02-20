@@ -15,6 +15,7 @@ public class Arm extends SubsystemBase {
   private PWMVictorSPX m_ArmRightVictorSPX = null;
   private DigitalInput m_forwardArmStop = null;
   private DigitalInput m_reverseArmStop = null;
+  private Arm m_arm = null;
 
   /** Creates a new Arm. */
   public Arm() {
@@ -22,7 +23,11 @@ public class Arm extends SubsystemBase {
     m_ArmRightVictorSPX = new PWMVictorSPX(Constants.PivotConstants.PIVOT_MOTOR_RIGHT_VICTORSPX);
     m_forwardArmStop = new DigitalInput(Constants.LimitConstants.ARM_FORWARD_LIMIT_SWITCH);
     m_reverseArmStop = new DigitalInput(Constants.LimitConstants.ARM_REVERSE_LIMIT_SWITCH);
-    
+    m_arm = new Arm();
+
+    setDefaultCommand(run(() -> {
+      m_arm.pivotforwardCommand();
+    }));
   }
 
   public Command pivotforwardCommand() {

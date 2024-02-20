@@ -5,16 +5,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
 
-public final class AutoReverseRotate {
-  /** Example static factory for an autonomous command. */
-  public static Command reverseRotate(Drivetrain m_drivetrain) {
-    return new RunCommand(() -> m_drivetrain.arcadeDrive(-0.5, 0))
-    .withTimeout(1)
-    .andThen(new RunCommand(() -> m_drivetrain.arcadeDrive(0,0.25))
-    .withTimeout(5));
+public class AutoReverseRotate {
+  
+  public static Command reverseRotate() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> {
+        m_drivetrain.arcadeDrive(-0.25, 0);
+      }),
+      new
+
     
   }
 
