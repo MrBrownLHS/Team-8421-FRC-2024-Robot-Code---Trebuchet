@@ -28,11 +28,9 @@ CollectorLauncher m_collectorlauncher) {
 }
 
 public Command launchRunRotateCommand() {
-  return Commands.sequence(
-    m_collectorlauncher.collectLaunchCommand().beforeStarting(
-      m_drivetrain.arcadeDrive
-    )
-  )
+  Command launchRunRotateCommand = m_collectorlauncher.collectLaunchCommand()
+  .andThen(Commands.waitSeconds(2))
+  .andThen(m_drivetrain.
 }
  /** Creates a new autoLaunchDriveRotate. */
 
