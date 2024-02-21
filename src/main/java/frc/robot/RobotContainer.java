@@ -31,7 +31,7 @@ public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final Arm m_arm = new Arm();
   private final CollectorLauncher m_notecollectorlauncher = new CollectorLauncher();
-  private double moveSpeed, rotateSpeed;
+  
 
       
     //** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -85,7 +85,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Drivetrain.
+   
+    
     // An example command will be run in autonomous
 
     
