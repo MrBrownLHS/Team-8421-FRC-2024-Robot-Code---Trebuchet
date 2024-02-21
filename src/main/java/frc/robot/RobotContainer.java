@@ -8,11 +8,14 @@ import frc.robot.Constants.CoPilotConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import java.util.function.DoubleSupplier;
 
 // Use this to help with static error https://github.com/TheMathWiz56/2024-Crescendo-Java-Code-Joseph/blob/main/2024%20Crescendo%20Java%20Code%20-%20Joseph/Swerve_Project/src/main/java/frc/robot/RobotContainer.java
 /**
@@ -28,8 +31,10 @@ public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final Arm m_arm = new Arm();
   private final CollectorLauncher m_notecollectorlauncher = new CollectorLauncher();
-    
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private double moveSpeed, rotateSpeed;
+
+      
+    //** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
@@ -49,7 +54,7 @@ public class RobotContainer {
   
    private void configureBindings() {
     new RunCommand(() -> m_drivetrain.arcadeDrive(-driveController.getLeftY(), -driveController.getRightX()));
-          
+        
     copilotController.rightBumper().onTrue(new InstantCommand(() -> m_arm.pivotforwardCommand()));
 
     copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverseCommand()));

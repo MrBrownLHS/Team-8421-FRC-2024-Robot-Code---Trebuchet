@@ -61,20 +61,19 @@ public class CollectorLauncher extends SubsystemBase {
   }
 
   public Command collectLaunchCommand() {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        m_launchLeftVictorSPX.set(1);
-        m_launchRightVictorSPX.set(-1);
-      }),
-      new WaitCommand(2),
-      new InstantCommand(() -> m_collectorVictorSPX.set(0.5)),
-      new WaitCommand(5),
+    return run(() -> {
+      m_launchLeftVictorSPX.set(1);
+      m_launchRightVictorSPX.set(-1);
+      new WaitCommand(2).schedule(); // Wait for 2 seconds
+      m_collectorVictorSPX.set(0.5);
+      new WaitCommand(5).schedule(); // Wait for 5 seconds
+    }).alongWith(
       new InstantCommand(() -> {
         m_collectorVictorSPX.stopMotor();
         m_launchLeftVictorSPX.stopMotor();
         m_launchRightVictorSPX.stopMotor();
-      })
-    );
+      }));
+    
   }
 
   @Override
