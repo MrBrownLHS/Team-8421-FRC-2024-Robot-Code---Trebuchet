@@ -32,9 +32,9 @@ public class Drivetrain extends SubsystemBase {
     }));
   }
 
-  public Command arcadeDrive(DoubleSupplier moveSpeed, DoubleSupplier rotateSpeed){
+  public Command arcadeDrive(double moveSpeed, double rotateSpeed){
     return run(() -> {
-      m_drivetrain.arcadeDrive(0.5 * moveSpeed.getAsDouble(), 0.5 * rotateSpeed.getAsDouble());
+      m_drivetrain.arcadeDrive(0.5 * moveSpeed, 0.5 * rotateSpeed);
     });
   }
 

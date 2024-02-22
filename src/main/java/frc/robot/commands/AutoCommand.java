@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.*;
+
+import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.function.DoubleSupplier;
 
 
@@ -17,20 +19,20 @@ import java.util.function.DoubleSupplier;
 public class AutoCommand {
   private Drivetrain m_drivetrain;
   private CollectorLauncher m_collectorlauncher;
-  private double moveSpeed, rotateSpeed;
+  private DoubleAccumulator moveSpeed, rotateSpeed;
 
-public AutoCommand(Drivetrain m_drivetrain, double moveSpeed, double rotateSpeed, 
+public AutoCommand(Drivetrain m_drivetrain, DoubleSupplier moveSpeed, DoubleSupplier rotateSpeed, 
 CollectorLauncher m_collectorlauncher) {
   this.m_drivetrain = m_drivetrain;
   this.m_collectorlauncher = m_collectorlauncher;
-  this.moveSpeed = moveSpeed;
-  this.rotateSpeed = rotateSpeed;
+  
+  
 }
 
 public Command launchRunRotateCommand() {
   return Commands.sequence(
     m_collectorlauncher.collectLaunchCommand().beforeStarting(
-      m_drivetrain.arcadeDrive
+      m_drivetrain.arcadeDrive(-0.25, 0)
     )
   )
 }
