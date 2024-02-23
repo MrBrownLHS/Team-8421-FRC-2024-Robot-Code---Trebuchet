@@ -5,13 +5,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 
 public class CollectorLauncher extends SubsystemBase {
   private PWMVictorSPX m_collectorVictorSPX = null;
@@ -47,9 +45,11 @@ public class CollectorLauncher extends SubsystemBase {
    public Command collectReverseCommand() {
     return run(() -> {
       m_collectorVictorSPX.set(-0.25);
-    });
-
-
+    }).andThen(
+      runOnce(() -> {
+        m_collectorVictorSPX.stopMotor();
+   }));
+    
   }
 
   public Command collectlaunchStopCommand() {
@@ -61,20 +61,31 @@ public class CollectorLauncher extends SubsystemBase {
   }
 
   public Command collectLaunchCommand() {
-    return run(() -> {
+    return sequence(
+      run(() -> {
       m_launchLeftVictorSPX.set(1);
       m_launchRightVictorSPX.set(-1);
-      new WaitCommand(2).schedule(); // Wait for 2 seconds
+      m_collectorVictorSPX.set(0);
+    }).withTimeout(2.0),
+      run(() -> {
+      m_launchLeftVictorSPX.set(1);
+      m_launchRightVictorSPX.set(-1);
       m_collectorVictorSPX.set(0.5);
-      new WaitCommand(5).schedule(); // Wait for 5 seconds
-    }).alongWith(
-      new InstantCommand(() -> {
+    }).withTimeout(5)
+    ).alongWith(
+      runOnce(() -> {
         m_collectorVictorSPX.stopMotor();
         m_launchLeftVictorSPX.stopMotor();
         m_launchRightVictorSPX.stopMotor();
       }));
     
   }
+
+  private Command sequence(ParallelRaceGroup withTimeout, ParallelRaceGroup withTimeout2) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'sequence'");
+  }
+
 
   @Override
   public void periodic() {

@@ -22,14 +22,16 @@ public class Drivetrain extends SubsystemBase {
   private final PWMVictorSPX m_rightFrontVictorSPX = new PWMVictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_FRONT_VICTORSPX);
   private final PWMVictorSPX m_rightRearVictorSPX = new PWMVictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_REAR_VICTORSPX);
   private final DifferentialDrive m_drivetrain = new DifferentialDrive(m_leftFrontVictorSPX, m_rightFrontVictorSPX);
-
+  
   public Drivetrain() {
+
     m_leftFrontVictorSPX.addFollower(m_leftRearVictorSPX);
     m_rightFrontVictorSPX.addFollower(m_rightRearVictorSPX);
 
     setDefaultCommand(run(() -> {
       m_drivetrain.arcadeDrive(0.0, 0.0);
     }));
+
   }
 
   public Command arcadeDrive(DoubleSupplier moveSpeed, DoubleSupplier rotateSpeed){

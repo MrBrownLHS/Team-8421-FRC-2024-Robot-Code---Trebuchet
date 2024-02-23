@@ -6,18 +6,20 @@ package frc.robot;
 
 import frc.robot.Constants.CoPilotConstants;
 import frc.robot.Constants.DriverConstants;
+import frc.robot.commands.AutoLaunchRun;
+import frc.robot.commands.AutoRunRotate;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
-// Use this to help with static error https://github.com/TheMathWiz56/2024-Crescendo-Java-Code-Joseph/blob/main/2024%20Crescendo%20Java%20Code%20-%20Joseph/Swerve_Project/src/main/java/frc/robot/RobotContainer.java
+
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -31,6 +33,11 @@ public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final Arm m_arm = new Arm();
   private final CollectorLauncher m_notecollectorlauncher = new CollectorLauncher();
+
+  private final Command m_autoRunRotate = new AutoRunRotate();
+  private final Command m_autoLaunchRun = new AutoLaunchRun();
+
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
   
 
       
@@ -38,6 +45,36 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    m_chooser.setDefaultOption("Run Rotate", m_autoRunRotate);
+    m_chooser.addOption("Launch Run Rotate", m_autoLaunchRun);
+
+    Shuffleboard.getTab("Autonomous").add(m_chooser);
+
+    Shuffleboard.getTab("DriveTrain").add(m_chooser);
+    Shuffleboard.getTab("Arm").add(m_chooser);
+    Shuffleboard.getTab("Collector-Launcher").add(m_chooser);
+
+    CommandScheduler.getInstance()
+        .onCommandInitialize(
+            command ->
+                Shuffleboard.addEventMarker(
+                    "Command initialized", command.getName(), EventImportance.kNormal));
+    CommandScheduler.getInstance()
+        .onCommandExecute(
+            command ->
+                Shuffleboard.addEventMarker(
+                    "Command executed", command.getName(), EventImportance.kNormal));
+    CommandScheduler.getInstance()
+        .onCommandFinish(
+            command ->
+                Shuffleboard.addEventMarker(
+                    "Command finished", command.getName(), EventImportance.kNormal));
+    CommandScheduler.getInstance()
+        .onCommandInterrupt(
+            command ->
+                Shuffleboard.addEventMarker(
+                    "Command interrupted", command.getName(), EventImportance.kNormal));
 
            
   }
@@ -53,7 +90,9 @@ public class RobotContainer {
    */
   
    private void configureBindings() {
-    new RunCommand(() -> m_drivetrain.arcadeDrive(-driveController.getLeftY(), -driveController.getRightX()));
+    m_drivetrain.setDefaultCommand(
+      m_drivetrain.arcadeDrive(() -> -driveController.getLeftY(), () -> -driveController.getRightX())
+    );
         
     copilotController.rightBumper().onTrue(new InstantCommand(() -> m_arm.pivotforwardCommand()));
 
@@ -66,6 +105,8 @@ public class RobotContainer {
     copilotController.rightTrigger().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectLaunchCommand()));
 
     copilotController.y().whileTrue(new InstantCommand(() -> m_arm.chainHangCommand()));
+
+
 
 
     
@@ -85,6 +126,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return m_chooser.getSelected();
    
     
     // An example command will be run in autonomous

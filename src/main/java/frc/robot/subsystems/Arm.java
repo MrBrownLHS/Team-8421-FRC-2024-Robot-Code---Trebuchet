@@ -54,7 +54,12 @@ public class Arm extends SubsystemBase {
     return run(() -> {
       m_ArmLeftVictorSPX.set(0.25);
       m_ArmRightVictorSPX.set(-0.25);
-    }); 
+    }).andThen(
+      runOnce(() ->{
+        m_ArmLeftVictorSPX.stopMotor();
+        m_ArmRightVictorSPX.stopMotor();
+      }));
+    
   }
 
   @Override
