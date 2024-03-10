@@ -17,6 +17,7 @@ public class CollectorLauncher extends SubsystemBase {
   private PWMVictorSPX m_launchRightVictorSPX = null;
   private DigitalInput m_collectorStop = null;
   private CollectorLauncher m_collectorlauncher = null;
+  private PWMVictorSPX m_rollerVictorSPX = null;
   
   
   
@@ -28,6 +29,9 @@ public class CollectorLauncher extends SubsystemBase {
     m_launchLeftVictorSPX = new PWMVictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_LEFT_VICTORSPX);
     m_launchRightVictorSPX = new PWMVictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_RIGHT_VICTORSPX);     
     m_collectorlauncher = new CollectorLauncher();
+    m_rollerVictorSPX = new PWMVictorSPX(Constants.CollectorConstants.FRONT_ROLLER_MOTOR_VICTORSPX);
+
+    m_collectorVictorSPX.addFollower(m_rollerVictorSPX);
 
     setDefaultCommand(run(() -> {
       m_collectorlauncher.collectlaunchStopCommand();}));
