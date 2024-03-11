@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import frc.robot.Constants;
@@ -18,6 +20,7 @@ public class CollectorLauncher extends SubsystemBase {
   private DigitalInput m_collectorStop = null;
   private CollectorLauncher m_collectorlauncher = null;
   private PWMVictorSPX m_rollerVictorSPX = null;
+  private Debouncer m_collectDebounce = null;
   
   
   
@@ -33,6 +36,11 @@ public class CollectorLauncher extends SubsystemBase {
 
     m_collectorVictorSPX.addFollower(m_rollerVictorSPX);
 
+    m_collectDebounce = new Debouncer(0.1, DebounceType.kBoth);
+
+
+
+
     setDefaultCommand(run(() -> {
       m_collectorlauncher.collectlaunchStopCommand();}));
   }
@@ -45,8 +53,8 @@ public class CollectorLauncher extends SubsystemBase {
       m_collectorVictorSPX.stopMotor();
     });      
    }
-  
-   public Command collectReverseCommand() {
+    
+  public Command collectReverseCommand() {
     return run(() -> {
       m_collectorVictorSPX.set(-0.25);
     }).andThen(

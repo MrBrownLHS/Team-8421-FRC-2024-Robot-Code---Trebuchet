@@ -106,6 +106,8 @@ public class RobotContainer {
 
     copilotController.y().whileTrue(new InstantCommand(() -> m_arm.chainHangCommand()));
 
+    copilotController.x().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectlaunchStopCommand()));
+
 
 
 
