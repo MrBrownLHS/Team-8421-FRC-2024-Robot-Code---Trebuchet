@@ -98,7 +98,7 @@ public class RobotContainer {
 
     copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverseCommand()));
 
-    copilotController.a().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectCommand()));
+    copilotController.a().whileTrue(new InstantCommand(() -> m_notecollectorlauncher.collectCommand()));
 
     copilotController.b().whileTrue(new InstantCommand(() -> m_notecollectorlauncher.collectReverseCommand()));
 

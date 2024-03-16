@@ -31,8 +31,8 @@ public final class Constants {
 
   }
   public static class CollectorConstants {
-    public static final int COLLECTOR_MOTOR_VICTORSPX = 4;
-    public static final int FRONT_ROLLER_MOTOR_VICTORSPX = 9;
+    public static final int COLLECTOR_MOTOR_LEFT_VICTORSPX = 4;
+    public static final int COLLECTOR_MOTOR_RIGHT_VICTORSPX = 9;
 
   }
 
