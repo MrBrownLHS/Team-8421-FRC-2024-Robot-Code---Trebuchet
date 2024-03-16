@@ -6,8 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import frc.robot.Constants;
@@ -17,7 +15,7 @@ public class CollectorLauncher extends SubsystemBase {
   private PWMVictorSPX m_leftcollectorVictorSPX = null;
   private PWMVictorSPX m_launchLeftVictorSPX = null;
   private PWMVictorSPX m_launchRightVictorSPX = null;
-  private DigitalInput m_collectorStop = null;
+  //private DigitalInput m_collectorStop = null;
   private CollectorLauncher m_collectorlauncher = null;
   private PWMVictorSPX m_rightcollectorVictorSPX = null;
   
@@ -28,7 +26,7 @@ public class CollectorLauncher extends SubsystemBase {
   public CollectorLauncher(){
     m_leftcollectorVictorSPX = new PWMVictorSPX(Constants.CollectorConstants.COLLECTOR_MOTOR_LEFT_VICTORSPX);
     m_rightcollectorVictorSPX = new PWMVictorSPX(Constants.CollectorConstants.COLLECTOR_MOTOR_RIGHT_VICTORSPX);
-    m_collectorStop = new DigitalInput(Constants.LimitConstants.COLLECTOR_LIMIT_SWITCH);
+    //m_collectorStop = new DigitalInput(Constants.LimitConstants.COLLECTOR_LIMIT_SWITCH);
     m_launchLeftVictorSPX = new PWMVictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_LEFT_VICTORSPX);
     m_launchRightVictorSPX = new PWMVictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_RIGHT_VICTORSPX);     
     m_collectorlauncher = new CollectorLauncher();
