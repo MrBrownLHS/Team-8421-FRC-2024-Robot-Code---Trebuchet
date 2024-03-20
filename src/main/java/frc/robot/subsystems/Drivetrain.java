@@ -28,6 +28,9 @@ public class Drivetrain extends SubsystemBase {
     m_leftFrontVictorSPX.addFollower(m_leftRearVictorSPX);
     m_rightFrontVictorSPX.addFollower(m_rightRearVictorSPX);
 
+    m_rightFrontVictorSPX.setInverted(true);
+
+
     setDefaultCommand(run(() -> {
       m_drivetrain.arcadeDrive(0.0, 0.0);
     }));
@@ -36,7 +39,7 @@ public class Drivetrain extends SubsystemBase {
 
   public Command arcadeDrive(DoubleSupplier moveSpeed, DoubleSupplier rotateSpeed){
     return run(() -> {
-      m_drivetrain.arcadeDrive(0.5 * moveSpeed.getAsDouble(), 0.5 * rotateSpeed.getAsDouble());
+      m_drivetrain.arcadeDrive(0.75 * moveSpeed.getAsDouble(), 0.75 * rotateSpeed.getAsDouble());
     });
   }
 

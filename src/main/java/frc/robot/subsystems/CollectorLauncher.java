@@ -16,7 +16,6 @@ public class CollectorLauncher extends SubsystemBase {
   private PWMVictorSPX m_launchLeftVictorSPX = null;
   private PWMVictorSPX m_launchRightVictorSPX = null;
   //private DigitalInput m_collectorStop = null;
-  private CollectorLauncher m_collectorlauncher = null;
   private PWMVictorSPX m_rightcollectorVictorSPX = null;
   
   
@@ -29,11 +28,11 @@ public class CollectorLauncher extends SubsystemBase {
     //m_collectorStop = new DigitalInput(Constants.LimitConstants.COLLECTOR_LIMIT_SWITCH);
     m_launchLeftVictorSPX = new PWMVictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_LEFT_VICTORSPX);
     m_launchRightVictorSPX = new PWMVictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_RIGHT_VICTORSPX);     
-    m_collectorlauncher = new CollectorLauncher();
+    //m_collectorlauncher = new CollectorLauncher();
     
 
     setDefaultCommand(run(() -> {
-      m_collectorlauncher.collectlaunchStopCommand();}));
+      this.collectlaunchStopCommand();}));
   }
     
 
@@ -49,8 +48,8 @@ public class CollectorLauncher extends SubsystemBase {
 
   public Command collectCommand() {
     return run(() -> {
-      m_leftcollectorVictorSPX.set(0.25);
-      m_rightcollectorVictorSPX.set(-0.25);
+      m_leftcollectorVictorSPX.set(-0.5);
+      m_rightcollectorVictorSPX.set(0.5);
     }).andThen(
       runOnce(() -> {
       m_leftcollectorVictorSPX.stopMotor();
@@ -60,8 +59,8 @@ public class CollectorLauncher extends SubsystemBase {
     
   public Command collectReverseCommand() {
     return run(() -> {
-      m_leftcollectorVictorSPX.set(-0.25);
-      m_rightcollectorVictorSPX.set(0.25);
+      m_leftcollectorVictorSPX.set(0.5);
+      m_rightcollectorVictorSPX.set(-0.5);
     }).andThen(
       runOnce(() -> {
         m_leftcollectorVictorSPX.stopMotor();
@@ -79,6 +78,7 @@ public class CollectorLauncher extends SubsystemBase {
     });
   }
 
+  /* 
   public Command collectLaunchCommand() {
     return sequence(
       run(() -> {
@@ -101,12 +101,34 @@ public class CollectorLauncher extends SubsystemBase {
         m_launchRightVictorSPX.stopMotor();
       }));
     
+  }*/
+
+  public Command collectLaunchCommand() {
+    return run(() -> {
+      m_launchLeftVictorSPX.set(1);
+      m_launchRightVictorSPX.set(-1);
+      m_leftcollectorVictorSPX.set(0);
+      m_rightcollectorVictorSPX.set(0);
+    }).withTimeout(2.0).andThen(
+        run(() -> {
+        m_launchLeftVictorSPX.set(1);
+        m_launchRightVictorSPX.set(-1);
+        m_leftcollectorVictorSPX.set(-1);
+        m_rightcollectorVictorSPX.set(1);
+      }).withTimeout(5),
+      runOnce(() -> {
+        m_leftcollectorVictorSPX.stopMotor();
+        m_rightcollectorVictorSPX.stopMotor();
+        m_launchLeftVictorSPX.stopMotor();
+        m_launchRightVictorSPX.stopMotor();
+      }));   
   }
 
+  /*
   private Command sequence(ParallelRaceGroup withTimeout, ParallelRaceGroup withTimeout2) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'sequence'");
-  }
+  }*/
 
 
   @Override
