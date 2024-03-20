@@ -8,15 +8,18 @@ import frc.robot.Constants.CoPilotConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.AutoLaunchRun;
 import frc.robot.commands.AutoRunRotate;
+import frc.robot.commands.LaunchCollectLaunch;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
@@ -37,8 +40,10 @@ public class RobotContainer {
   private final SlewRateLimiter forwardBackLimiter = new SlewRateLimiter(2);
   private final SlewRateLimiter rotationLimiter = new SlewRateLimiter(2);
 
-  //private final Command m_autoRunRotate = new AutoRunRotate(m_drivetrain);
-  //private final Command m_autoLaunchRun = new AutoLaunchRun();
+  private final Command m_autoRunRotate = new AutoRunRotate(m_drivetrain);
+  private final Command m_autoLaunchRun = new AutoLaunchRun(m_drivetrain, m_notecollectorlauncher);
+  private final Command m_launchCollectLaunch = new LaunchCollectLaunch(m_drivetrain, m_notecollectorlauncher);
+
 
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   
@@ -49,35 +54,11 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    m_chooser.setDefaultOption("Run Rotate", new AutoRunRotate(m_drivetrain));
-    m_chooser.addOption("Launch Run Rotate", new AutoLaunchRun(m_drivetrain, m_notecollectorlauncher));
+    m_chooser.setDefaultOption("Run Rotate", m_autoRunRotate);
+    m_chooser.addOption("Launch Run Rotate", m_autoLaunchRun);
+    m_chooser.addOption("Launch Collect Launch", m_launchCollectLaunch);
 
-    Shuffleboard.getTab("Autonomous").add(m_chooser);
-
-    Shuffleboard.getTab("DriveTrain").add(m_chooser);
-    Shuffleboard.getTab("Arm").add(m_chooser);
-    Shuffleboard.getTab("Collector-Launcher").add(m_chooser);
-
-    CommandScheduler.getInstance()
-        .onCommandInitialize(
-            command ->
-                Shuffleboard.addEventMarker(
-                    "Command initialized", command.getName(), EventImportance.kNormal));
-    CommandScheduler.getInstance()
-        .onCommandExecute(
-            command ->
-                Shuffleboard.addEventMarker(
-                    "Command executed", command.getName(), EventImportance.kNormal));
-    CommandScheduler.getInstance()
-        .onCommandFinish(
-            command ->
-                Shuffleboard.addEventMarker(
-                    "Command finished", command.getName(), EventImportance.kNormal));
-    CommandScheduler.getInstance()
-        .onCommandInterrupt(
-            command ->
-                Shuffleboard.addEventMarker(
-                    "Command interrupted", command.getName(), EventImportance.kNormal));
+    SmartDashboard.putData(m_chooser);
 
            
   }
@@ -114,13 +95,19 @@ public class RobotContainer {
 
     copilotController.x().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectlaunchStopCommand()));
     */
+    //If the code below doesn't work try using new RunCommands
+    //copilotController.rightBumper().whileTrue(new RunCommand(()-> m_arm.pivotforwardCommand()));
     copilotController.rightBumper().whileTrue(m_arm.pivotforwardCommand());
+    copilotController.rightBumper().onFalse(m_arm.getDefaultCommand());
 
     copilotController.leftBumper().whileTrue(m_arm.pivotreverseCommand());
+    copilotController.leftBumper().onFalse(m_arm.getDefaultCommand());
 
-    copilotController.a().whileTrue(m_notecollectorlauncher.collectCommand());
+    copilotController.a().onTrue(m_notecollectorlauncher.collectCommand());
+    copilotController.a().onFalse(m_notecollectorlauncher.collectlaunchStopCommand());
 
     copilotController.b().whileTrue(m_notecollectorlauncher.collectReverseCommand());
+    copilotController.a().onFalse(m_notecollectorlauncher.collectlaunchStopCommand());
 
     copilotController.rightTrigger().onTrue(m_notecollectorlauncher.collectLaunchCommand());
 

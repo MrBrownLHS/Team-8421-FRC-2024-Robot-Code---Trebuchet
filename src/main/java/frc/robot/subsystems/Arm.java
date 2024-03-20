@@ -15,17 +15,17 @@ import frc.robot.Constants;
 public class Arm extends SubsystemBase {
   private CANSparkMax m_ArmLeftSparkMax = null;
   private CANSparkMax m_ArmRightSparkMax = null;
- // private DigitalInput m_forwardArmStop = null;
-  //private DigitalInput m_reverseArmStop = null;
- // private Arm m_arm = null;
+  private DigitalInput m_forwardArmStop = null;
+  private DigitalInput m_reverseArmStop = null;
+
 
   /** Creates a new Arm. */
   public Arm() {
     m_ArmLeftSparkMax = new CANSparkMax(Constants.PivotConstants.PIVOT_MOTOR_LEFT_SPARKMAX, MotorType.kBrushed);
     m_ArmRightSparkMax = new CANSparkMax(Constants.PivotConstants.PIVOT_MOTOR_RIGHT_SPARKMAX, MotorType.kBrushed);
-    //m_forwardArmStop = new DigitalInput(Constants.LimitConstants.ARM_FORWARD_LIMIT_SWITCH);
-    //m_reverseArmStop = new DigitalInput(Constants.LimitConstants.ARM_REVERSE_LIMIT_SWITCH);
-    //m_arm = new Arm();
+    m_forwardArmStop = new DigitalInput(Constants.LimitConstants.ARM_FORWARD_LIMIT_SWITCH);
+    m_reverseArmStop = new DigitalInput(Constants.LimitConstants.ARM_REVERSE_LIMIT_SWITCH);
+    
 
     setDefaultCommand(run(() -> {
       this.armStopCommand();
@@ -43,37 +43,41 @@ public class Arm extends SubsystemBase {
     return run(() -> {
       m_ArmLeftSparkMax.set(0);
       m_ArmRightSparkMax.set(0);
-    }).andThen(
-      run(() ->{
-        m_ArmLeftSparkMax.stopMotor();
-        m_ArmRightSparkMax.stopMotor();
-      }));
-    
-    //.until(m_forwardArmStop::get).finallyDo(() -> {
-      //m_ArmLeftSparkMax.stopMotor();
-      //m_ArmLeftSparkMax.stopMotor();
-    //});      
+    }).until(m_forwardArmStop::get).finallyDo(() -> {
+      m_ArmLeftSparkMax.stopMotor();
+      m_ArmLeftSparkMax.stopMotor();
+    });
+     
+        
+    //.andThen(
+      //run(() ->{
+        //m_ArmLeftSparkMax.stopMotor();
+        //m_ArmRightSparkMax.stopMotor();
+      //}));
+            
    }
 
   public Command pivotreverseCommand() {
     return run(() -> {
       m_ArmLeftSparkMax.set(0.2);
       m_ArmRightSparkMax.set(-0.2);
-    }).andThen(
-      run(() ->{
-        m_ArmLeftSparkMax.stopMotor();
-        m_ArmRightSparkMax.stopMotor();
-      }));
-    //.until(m_reverseArmStop::get).finallyDo(() -> {
-      //m_ArmLeftSparkMax.stopMotor();
-      //m_ArmLeftSparkMax.stopMotor();
-    //}); 
+    }).until(m_reverseArmStop::get).finallyDo(() -> {
+      m_ArmLeftSparkMax.stopMotor();
+      m_ArmLeftSparkMax.stopMotor();
+    });
+    
+    //.andThen(
+      //run(() ->{
+        //m_ArmLeftSparkMax.stopMotor();
+        //m_ArmRightSparkMax.stopMotor();
+      //}));
+     
    }
 
   public Command chainHangCommand() {
     return run(() -> {
-      m_ArmLeftSparkMax.set(-0.15);
-      m_ArmRightSparkMax.set(0.15);
+      m_ArmLeftSparkMax.set(-0.75);
+      m_ArmRightSparkMax.set(0.75);
     }).andThen(
       run(() ->{
         m_ArmLeftSparkMax.stopMotor();

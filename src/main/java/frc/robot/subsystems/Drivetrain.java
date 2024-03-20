@@ -11,24 +11,25 @@ import frc.robot.Constants;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 
 
 public class Drivetrain extends SubsystemBase {
 
-  private final PWMVictorSPX m_leftFrontVictorSPX = new PWMVictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_LEFT_FRONT_VICTORSPX);
-  private final PWMVictorSPX m_leftRearVictorSPX = new PWMVictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_LEFT_REAR_VICTORSPX);
-  private final PWMVictorSPX m_rightFrontVictorSPX = new PWMVictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_FRONT_VICTORSPX);
-  private final PWMVictorSPX m_rightRearVictorSPX = new PWMVictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_REAR_VICTORSPX);
-  private final DifferentialDrive m_drivetrain = new DifferentialDrive(m_leftFrontVictorSPX, m_rightFrontVictorSPX);
+  private final WPI_VictorSPX m_leftFrontVictorSPX = new WPI_VictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_LEFT_FRONT_VICTORSPX);
+  private final WPI_VictorSPX m_leftRearVictorSPX = new WPI_VictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_LEFT_REAR_VICTORSPX);
+  private final WPI_VictorSPX m_rightFrontVictorSPX = new WPI_VictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_FRONT_VICTORSPX);
+  private final WPI_VictorSPX m_rightRearVictorSPX = new WPI_VictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_REAR_VICTORSPX);
+  private final DifferentialDrive m_drivetrain = new DifferentialDrive(m_leftFrontVictorSPX, m_leftRearVictorSPX);
   
   public Drivetrain() {
 
-    m_leftFrontVictorSPX.addFollower(m_leftRearVictorSPX);
-    m_rightFrontVictorSPX.addFollower(m_rightRearVictorSPX);
+    m_leftRearVictorSPX.follow(m_leftFrontVictorSPX);
+    m_rightRearVictorSPX.follow(m_rightFrontVictorSPX);
 
     m_rightFrontVictorSPX.setInverted(true);
+   
 
 
     setDefaultCommand(run(() -> {
