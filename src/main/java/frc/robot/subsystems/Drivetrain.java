@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase {
 
   }
 
-  public Command arcadeDrive(double moveSpeed, double rotateSpeed){
+  public Command arcadeDrive(DoubleSupplier moveSpeed, DoubleSupplier rotateSpeed){
     return run(() -> {
       m_drivetrain.arcadeDrive(0.75 * moveSpeed.getAsDouble(), 0.75 * rotateSpeed.getAsDouble());
     });
