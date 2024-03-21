@@ -32,7 +32,7 @@ CollectorLauncher m_collectorlauncher) {
 public Command launchRunRotateCommand() {
   return Commands.sequence(
     m_collectorlauncher.collectLaunchCommand().beforeStarting(
-      m_drivetrain.arcadeDrive(-0.25, 0)
+      m_drivetrain.arcadeDrive
     )
   )
 }
