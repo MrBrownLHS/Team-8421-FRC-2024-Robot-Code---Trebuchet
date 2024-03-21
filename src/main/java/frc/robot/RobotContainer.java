@@ -6,18 +6,19 @@ package frc.robot;
 
 import frc.robot.Constants.CoPilotConstants;
 import frc.robot.Constants.DriverConstants;
+import frc.robot.commands.AutoLaunchRun;
+import frc.robot.commands.AutoRunRotate;
+import frc.robot.commands.LaunchCollectLaunch;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import java.util.function.DoubleSupplier;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-// Use this to help with static error https://github.com/TheMathWiz56/2024-Crescendo-Java-Code-Joseph/blob/main/2024%20Crescendo%20Java%20Code%20-%20Joseph/Swerve_Project/src/main/java/frc/robot/RobotContainer.java
+
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -31,6 +32,16 @@ public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final Arm m_arm = new Arm();
   private final CollectorLauncher m_notecollectorlauncher = new CollectorLauncher();
+
+  private final SlewRateLimiter forwardBackLimiter = new SlewRateLimiter(2);
+  private final SlewRateLimiter rotationLimiter = new SlewRateLimiter(2);
+
+  private final Command m_autoRunRotate = new AutoRunRotate(m_drivetrain);
+  private final Command m_autoLaunchRun = new AutoLaunchRun(m_drivetrain, m_notecollectorlauncher);
+  private final Command m_launchCollectLaunch = new LaunchCollectLaunch(m_drivetrain, m_notecollectorlauncher);
+
+
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
   
 
       
@@ -38,6 +49,12 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    m_chooser.setDefaultOption("Run Rotate", m_autoRunRotate);
+    m_chooser.addOption("Launch Run Rotate", m_autoLaunchRun);
+    m_chooser.addOption("Launch Collect Launch", m_launchCollectLaunch);
+
+    SmartDashboard.putData(m_chooser);
 
            
   }
@@ -53,19 +70,46 @@ public class RobotContainer {
    */
   
    private void configureBindings() {
-    new RunCommand(() -> m_drivetrain.arcadeDrive(-driveController.getLeftY(), -driveController.getRightX()));
-        
-    copilotController.rightBumper().onTrue(new InstantCommand(() -> m_arm.pivotforwardCommand()));
+    m_drivetrain.setDefaultCommand( 
+      m_drivetrain.arcadeDrive(
+        () -> -forwardBackLimiter.calculate(driveController.getLeftY()), 
+        () -> rotationLimiter.calculate(driveController.getRightX()))
+    );
+    
+    /*
+    copilotController.rightBumper().whileTrue(new InstantCommand(() -> m_arm.pivotforwardCommand()));
 
-    copilotController.leftBumper().onTrue(new InstantCommand(() -> m_arm.pivotreverseCommand()));
+    copilotController.leftBumper().whileTrue(new InstantCommand(() -> m_arm.pivotreverseCommand()));
 
-    copilotController.a().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectCommand()));
+    copilotController.a().whileTrue(new InstantCommand(() -> m_notecollectorlauncher.collectCommand()));
 
     copilotController.b().whileTrue(new InstantCommand(() -> m_notecollectorlauncher.collectReverseCommand()));
 
     copilotController.rightTrigger().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectLaunchCommand()));
 
     copilotController.y().whileTrue(new InstantCommand(() -> m_arm.chainHangCommand()));
+
+    copilotController.x().onTrue(new InstantCommand(() -> m_notecollectorlauncher.collectlaunchStopCommand()));
+    */
+    //If the code below doesn't work try using new RunCommands
+    //copilotController.rightBumper().whileTrue(new RunCommand(()-> m_arm.pivotforwardCommand()));
+    copilotController.rightBumper().whileTrue(m_arm.pivotforwardCommand());
+    copilotController.rightBumper().onFalse(m_arm.getDefaultCommand());
+
+    copilotController.leftBumper().whileTrue(m_arm.pivotreverseCommand());
+    copilotController.leftBumper().onFalse(m_arm.getDefaultCommand());
+
+    copilotController.a().onTrue(m_notecollectorlauncher.collectCommand());
+    copilotController.a().onFalse(m_notecollectorlauncher.collectlaunchStopCommand());
+
+    copilotController.b().whileTrue(m_notecollectorlauncher.collectReverseCommand());
+    copilotController.b().onFalse(m_notecollectorlauncher.collectlaunchStopCommand());
+
+    copilotController.rightTrigger().onTrue(m_notecollectorlauncher.collectLaunchCommand());
+
+    copilotController.y().whileTrue(m_arm.chainHangCommand());
+
+    copilotController.x().onTrue(m_notecollectorlauncher.collectlaunchStopCommand());
 
 
     
@@ -85,6 +129,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return m_chooser.getSelected();
    
     
     // An example command will be run in autonomous
