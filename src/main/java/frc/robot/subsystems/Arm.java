@@ -17,6 +17,7 @@ public class Arm extends SubsystemBase {
   private CANSparkMax m_ArmRightSparkMax = null;
   private DigitalInput m_forwardArmStop = null;
   private DigitalInput m_reverseArmStop = null;
+  
 
 
   /** Creates a new Arm. */
@@ -25,6 +26,10 @@ public class Arm extends SubsystemBase {
     m_ArmRightSparkMax = new CANSparkMax(Constants.PivotConstants.PIVOT_MOTOR_RIGHT_SPARKMAX, MotorType.kBrushed);
     m_forwardArmStop = new DigitalInput(Constants.LimitConstants.ARM_FORWARD_LIMIT_SWITCH);
     m_reverseArmStop = new DigitalInput(Constants.LimitConstants.ARM_REVERSE_LIMIT_SWITCH);
+
+    
+
+
     
 
     setDefaultCommand(run(() -> {
@@ -79,7 +84,7 @@ public class Arm extends SubsystemBase {
       m_ArmLeftSparkMax.set(-0.75);
       m_ArmRightSparkMax.set(0.75);
     }).andThen(
-      run(() ->{
+      runOnce(() ->{
         m_ArmLeftSparkMax.stopMotor();
         m_ArmRightSparkMax.stopMotor();
       }));

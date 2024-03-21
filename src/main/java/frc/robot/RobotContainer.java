@@ -11,6 +11,7 @@ import frc.robot.commands.AutoRunRotate;
 import frc.robot.commands.LaunchCollectLaunch;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -93,21 +94,22 @@ public class RobotContainer {
     */
     //If the code below doesn't work try using new RunCommands
     //copilotController.rightBumper().whileTrue(new RunCommand(()-> m_arm.pivotforwardCommand()));
-    copilotController.rightBumper().whileTrue(m_arm.pivotforwardCommand());
-    copilotController.rightBumper().onFalse(m_arm.getDefaultCommand());
+    copilotController.rightBumper().whileTrue(new RunCommand(() -> m_arm.pivotforwardCommand())
+    .handleInterrupt(() -> m_arm.armStopCommand()));
 
-    copilotController.leftBumper().whileTrue(m_arm.pivotreverseCommand());
-    copilotController.leftBumper().onFalse(m_arm.getDefaultCommand());
+    copilotController.leftBumper().whileTrue(new RunCommand(() -> m_arm.pivotreverseCommand())
+    .handleInterrupt(() -> m_arm.armStopCommand()));
 
     copilotController.a().onTrue(m_notecollectorlauncher.collectCommand());
-    copilotController.a().onFalse(m_notecollectorlauncher.collectlaunchStopCommand());
+    
 
     copilotController.b().whileTrue(m_notecollectorlauncher.collectReverseCommand());
     copilotController.b().onFalse(m_notecollectorlauncher.collectlaunchStopCommand());
 
-    copilotController.rightTrigger().onTrue(m_notecollectorlauncher.launchCommand());
+    copilotController.rightTrigger().onTrue(new RunCommand(() -> m_notecollectorlauncher.launchCommand()));
 
-    copilotController.y().whileTrue(m_arm.chainHangCommand());
+    copilotController.y().whileTrue(new RunCommand(() -> m_arm.chainHangCommand())
+    .handleInterrupt(() -> m_arm.armStopCommand()));
 
     copilotController.x().onTrue(m_notecollectorlauncher.collectlaunchStopCommand());
 
