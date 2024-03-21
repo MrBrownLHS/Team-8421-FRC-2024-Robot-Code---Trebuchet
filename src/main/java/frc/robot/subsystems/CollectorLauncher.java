@@ -18,6 +18,7 @@ public class CollectorLauncher extends SubsystemBase {
   private WPI_VictorSPX m_launchRightVictorSPX = null;
   private DigitalInput m_collectorStop = null;
   private WPI_VictorSPX m_rightcollectorVictorSPX = null;
+  private WPI_VictorSPX m_frontcollectorVictorSPX = null;
   
   
   
@@ -28,7 +29,8 @@ public class CollectorLauncher extends SubsystemBase {
     m_rightcollectorVictorSPX = new WPI_VictorSPX(Constants.CollectorConstants.COLLECTOR_MOTOR_RIGHT_VICTORSPX);
     m_collectorStop = new DigitalInput(Constants.LimitConstants.COLLECTOR_LIMIT_SWITCH);
     m_launchLeftVictorSPX = new WPI_VictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_LEFT_VICTORSPX);
-    m_launchRightVictorSPX = new WPI_VictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_RIGHT_VICTORSPX);     
+    m_launchRightVictorSPX = new WPI_VictorSPX(Constants.LaunchConstants.LAUNCH_MOTOR_RIGHT_VICTORSPX);  
+    m_frontcollectorVictorSPX = new WPI_VictorSPX(Constants.CollectorConstants.COLLECTOR_MOTOR_FRONT_VICTORSPX);   
     
     
 
@@ -41,6 +43,7 @@ public class CollectorLauncher extends SubsystemBase {
     return run(() -> {
       m_leftcollectorVictorSPX.set(0.25);
       m_rightcollectorVictorSPX.set(-0.25);
+      m_frontcollectorVictorSPX.set(0.25);
     }).until(m_collectorStop::get).finallyDo(() -> {
       m_leftcollectorVictorSPX.stopMotor();
       m_rightcollectorVictorSPX.stopMotor();
@@ -76,6 +79,7 @@ public class CollectorLauncher extends SubsystemBase {
       m_rightcollectorVictorSPX.stopMotor();
       m_launchLeftVictorSPX.stopMotor();
       m_launchRightVictorSPX.stopMotor();
+      m_frontcollectorVictorSPX.stopMotor();
     });
   }
 
@@ -104,7 +108,7 @@ public class CollectorLauncher extends SubsystemBase {
     
   }*/
 
-  public Command collectLaunchCommand() {
+  public Command launchCommand() {
     return run(() -> {
       m_launchLeftVictorSPX.set(1);
       m_launchRightVictorSPX.set(-1);

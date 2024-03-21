@@ -14,11 +14,11 @@ public class LaunchCollectLaunch extends SequentialCommandGroup {
   /** Creates a new AutoRoutines. */
   public LaunchCollectLaunch (Drivetrain m_drivetrain, CollectorLauncher m_collectorlauncher) {
     addCommands(
-      new RunCommand(() -> m_collectorlauncher.collectLaunchCommand()),
+      new RunCommand(() -> m_collectorlauncher.launchCommand()),
       new RunCommand(() -> m_drivetrain.arcadeDrive(() -> 0.5, () -> 0.0)).withTimeout(3),
       new RunCommand(() -> m_collectorlauncher.collectCommand()).withTimeout(2),
       new RunCommand(() -> m_drivetrain.arcadeDrive(() -> -0.5, () -> 0.0)).withTimeout(3),
-      new RunCommand(() -> m_collectorlauncher.collectLaunchCommand()),
+      new RunCommand(() -> m_collectorlauncher.launchCommand()),
       new RunCommand(() -> m_collectorlauncher.collectlaunchStopCommand())      
     );
   }

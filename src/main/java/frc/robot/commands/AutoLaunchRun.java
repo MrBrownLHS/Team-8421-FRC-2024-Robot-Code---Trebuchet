@@ -13,7 +13,7 @@ public class AutoLaunchRun extends SequentialCommandGroup {
   /** Creates a new AutoRoutines. */
   public AutoLaunchRun (Drivetrain m_drivetrain, CollectorLauncher m_collectorlauncher) {
     addCommands(
-      new RunCommand(() -> m_collectorlauncher.collectLaunchCommand()),
+      new RunCommand(() -> m_collectorlauncher.launchCommand()),
       new RunCommand(() -> m_drivetrain.arcadeDrive(() -> 0.5, () -> 0.0)).withTimeout(3),
       new RunCommand(() -> m_drivetrain.arcadeDrive(() -> 0.0, () -> 0.25)).withTimeout(5),
       new RunCommand(() -> m_collectorlauncher.collectlaunchStopCommand())

@@ -105,7 +105,7 @@ public class RobotContainer {
     copilotController.b().whileTrue(m_notecollectorlauncher.collectReverseCommand());
     copilotController.b().onFalse(m_notecollectorlauncher.collectlaunchStopCommand());
 
-    copilotController.rightTrigger().onTrue(m_notecollectorlauncher.collectLaunchCommand());
+    copilotController.rightTrigger().onTrue(m_notecollectorlauncher.launchCommand());
 
     copilotController.y().whileTrue(m_arm.chainHangCommand());
 
