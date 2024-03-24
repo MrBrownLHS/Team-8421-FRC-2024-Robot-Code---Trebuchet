@@ -11,6 +11,9 @@ import frc.robot.Constants;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 
@@ -21,40 +24,55 @@ public class Drivetrain extends SubsystemBase {
   private final WPI_VictorSPX m_leftRearVictorSPX = new WPI_VictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_LEFT_REAR_VICTORSPX);
   private final WPI_VictorSPX m_rightFrontVictorSPX = new WPI_VictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_FRONT_VICTORSPX);
   private final WPI_VictorSPX m_rightRearVictorSPX = new WPI_VictorSPX(Constants.ArcadeDriveConstants.ARCADEDRIVE_RIGHT_REAR_VICTORSPX);
-  private final DifferentialDrive m_drivetrain = new DifferentialDrive(m_leftFrontVictorSPX, m_leftRearVictorSPX);
+  private final DifferentialDrive m_drivetrain = new DifferentialDrive(m_leftFrontVictorSPX, m_rightFrontVictorSPX);
   
   public Drivetrain() {
 
-    m_leftRearVictorSPX.follow(m_leftFrontVictorSPX);
+    m_leftRearVictorSPX.follow(m_leftRearVictorSPX);
     m_rightRearVictorSPX.follow(m_rightFrontVictorSPX);
 
     m_rightFrontVictorSPX.setInverted(true);
+    m_leftFrontVictorSPX.setInverted(false);
+
+    m_leftRearVictorSPX.setInverted(InvertType.FollowMaster);
+    m_rightRearVictorSPX.setInverted(InvertType.FollowMaster);
+
+    
+
+    
    
 
 
-    setDefaultCommand(run(() -> {
-      m_drivetrain.arcadeDrive(0.0, 0.0);
-    }));
+    // setDefaultCommand(run(() -> {
+    //   m_drivetrain.arcadeDrive(0.0, 0.0);
+    // }));
 
   }
 
   public Command arcadeDrive(DoubleSupplier moveSpeed, DoubleSupplier rotateSpeed){
     return run(() -> {
-      m_drivetrain.arcadeDrive(0.75 * moveSpeed.getAsDouble(), 0.75 * rotateSpeed.getAsDouble());
+      m_drivetrain.arcadeDrive(moveSpeed.getAsDouble(), rotateSpeed.getAsDouble());
     });
   }
+
+  public Command driveStop(double moveSpeed, double rotatespeed){
+    return run(() -> {
+      m_drivetrain.arcadeDrive(0, 0);
+    });
+    
+  }
+
+ 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
-
   }
 
-public Object arcadeDrive(double d, double e) {
+//public Object arcadeDrive(double d, double e) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'arcadeDrive'");
-}
+    //throw new UnsupportedOperationException("Unimplemented method 'arcadeDrive'");
+//}
   
   
 
